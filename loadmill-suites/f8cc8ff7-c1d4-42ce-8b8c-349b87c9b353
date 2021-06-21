@@ -3,7 +3,17 @@
     "meta": {
       "description": "sync back and forth"
     },
-    "loginFlow": [],
+    "loginFlow": [
+      {
+        "url": "www.walla.oc.il?beforeAll",
+        "method": "GET",
+        "headers": [],
+        "assert": [],
+        "extract": [],
+        "timeout": 60000,
+        "expectedStatus": "SUCCESS"
+      }
+    ],
     "useCookies": true,
     "parameters": [
       {
@@ -28,11 +38,11 @@
     ],
     "authenticationHeaders": [],
     "parametersScope": "FLOW",
-    "sharedLoginFlowDescription": "New Load Test - Jun 21"
+    "sharedLoginFlowDescription": "BB efore all"
   },
   "flows": [
     {
-      "id": "88d4e76b-300c-43e9-aede-5d9636cc432a",
+      "id": "02158113-5f45-41d4-93ca-07de021fec5c",
       "order": 0,
       "conf": {
         "duration": 60000,
@@ -495,7 +505,7 @@
   "dependencies": {
     "hooks": {},
     "login": {
-      "id": "2c5da40b-c5c7-4780-bba2-a81de5f2b8fb"
+      "id": "5fa721f0-cf46-4f57-80bf-739f6ed20732"
     }
   }
 }
