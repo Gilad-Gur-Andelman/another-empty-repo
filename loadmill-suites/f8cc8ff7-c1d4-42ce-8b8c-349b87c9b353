@@ -1,0 +1,501 @@
+{
+  "conf": {
+    "meta": {
+      "description": "sync back and forth"
+    },
+    "loginFlow": [],
+    "useCookies": true,
+    "parameters": [
+      {
+        "web_url": [
+          "https://staging.loadmill.com",
+          "http://localhost:8090",
+          "https://loadmill-auto-descripti-y4vyyb.herokuapp.com"
+        ]
+      },
+      {
+        "testSuite1_desc": "suite 1"
+      },
+      {
+        "test_plan_1": "${__random_uuid()}"
+      },
+      {
+        "test_plan_2": "${__random_uuid()}"
+      },
+      {
+        "now": "${__now()}"
+      }
+    ],
+    "authenticationHeaders": [],
+    "parametersScope": "FLOW",
+    "sharedLoginFlowDescription": "New Load Test - Jun 21"
+  },
+  "flows": [
+    {
+      "id": "88d4e76b-300c-43e9-aede-5d9636cc432a",
+      "order": 0,
+      "conf": {
+        "duration": 60000,
+        "concurrency": 1,
+        "requests": [
+          {
+            "url": "${web_url}/api/test-plans",
+            "method": "POST",
+            "headers": [
+              {
+                "Accept": "*/*"
+              },
+              {
+                "Referer": "https://loadmill-test-plan-run-wznxu2h.herokuapp.com/app/api-tests/test-plans"
+              },
+              {
+                "Accept-Language": "en-US,en;q=0.9"
+              }
+            ],
+            "assert": [],
+            "extract": [
+              {
+                "emptyTestPlan_id": {
+                  "jsonPath": "$[\"testPlanId\"]"
+                }
+              }
+            ],
+            "timeout": 60000,
+            "expectedStatus": "SUCCESS",
+            "description": "create test plan 1 (empty one)"
+          },
+          {
+            "url": "${web_url}/api/test-plans/${__encode_url(emptyTestPlan_id)}",
+            "method": "PATCH",
+            "headers": [
+              {
+                "Accept": "*/*"
+              },
+              {
+                "Referer": "https://loadmill-test-plan-run-wznxu2h.herokuapp.com/app/api-tests/test-plans/c0874810-ff40-457c-a75d-4fd495c9863e"
+              },
+              {
+                "Accept-Language": "en-US,en;q=0.9"
+              }
+            ],
+            "assert": [],
+            "extract": [],
+            "timeout": 60000,
+            "expectedStatus": "SUCCESS",
+            "description": "update empty test plan 1 description",
+            "postData": {
+              "text": "{\"description\":\"${test_plan_1}\"}",
+              "mimeType": "application/json"
+            }
+          },
+          {
+            "url": "${web_url}/api/test-suites",
+            "method": "POST",
+            "headers": [],
+            "assert": [],
+            "extract": [
+              {
+                "testSuite1_id": {
+                  "jsonPath": "$[\"testSuiteId\"]"
+                }
+              }
+            ],
+            "timeout": 60000,
+            "expectedStatus": "SUCCESS",
+            "description": "Create suite 1",
+            "postData": {
+              "text": "{\"meta\":{\"description\":\"${testSuite1_desc}\"}}",
+              "mimeType": "application/json"
+            }
+          },
+          {
+            "url": "${web_url}/api/test-suites/${__encode_url(testSuite1_id)}",
+            "method": "GET",
+            "headers": [],
+            "assert": [
+              {
+                "check": "testSuite1_id",
+                "equals": "${response_suite1_id}"
+              }
+            ],
+            "extract": [
+              {
+                "suite1flow_id": {
+                  "jsonPath": "$[\"flows\"][0][\"id\"]"
+                }
+              },
+              {
+                "suite1flow_desc": {
+                  "jsonPath": "$[\"flows\"][0][\"description\"]"
+                }
+              },
+              {
+                "response_suite1_id": {
+                  "jsonPath": "$[\"id\"]"
+                }
+              }
+            ],
+            "timeout": 60000,
+            "expectedStatus": "SUCCESS",
+            "description": "get suite 1"
+          },
+          {
+            "url": "${web_url}/api/test-suites/${__encode_url(testSuite1_id)}/flows/${__encode_url(suite1flow_id)}",
+            "method": "PUT",
+            "headers": [],
+            "assert": [],
+            "extract": [],
+            "timeout": 60000,
+            "expectedStatus": "SUCCESS",
+            "description": "update the suite flow",
+            "postData": {
+              "text": "{\"meta\":{\"description\":\"${__escape_quotes(suite1flow_desc)}\"},\"requests\":[{\"url\":\"httpbin.org/status/404\",\"delay\":\"\",\"stopBefore\":\"\",\"description\":\"\",\"method\":\"GET\",\"expectedStatus\":\"SUCCESS\",\"headers\":{},\"extract\":[],\"assert\":[]}],\"skipLoginFlow\":false,\"parameterPools\":[]}",
+              "mimeType": "application/json"
+            }
+          },
+          {
+            "url": "${web_url}/api/test-suites/${__encode_url(testSuite1_id)}/flows/run-in-ci",
+            "method": "POST",
+            "headers": [
+              {
+                "Accept": "*/*"
+              },
+              {
+                "Referer": "https://loadmill-test-plan-run-wznxu2h.herokuapp.com/app/api-tests/test-suites/bcdcaffc-3123-48cf-8849-2d08e4f1d31f/flows/b199c04a-bdd4-4fe5-ae44-f8d74813bd17"
+              },
+              {
+                "Accept-Language": "en-US,en;q=0.9"
+              }
+            ],
+            "assert": [],
+            "extract": [],
+            "timeout": 60000,
+            "expectedStatus": "SUCCESS",
+            "description": "update suite 1 flow to run in ci =true",
+            "postData": {
+              "text": "{\"runInCi\":true,\"flowIds\":[\"${__escape_quotes(suite1flow_id)}\"]}",
+              "mimeType": "application/json"
+            }
+          },
+          {
+            "url": "${web_url}/api/test-plans",
+            "method": "POST",
+            "headers": [
+              {
+                "Accept": "*/*"
+              },
+              {
+                "Referer": "https://loadmill-test-plan-run-wznxu2h.herokuapp.com/app/api-tests/test-plans"
+              },
+              {
+                "Accept-Language": "en-US,en;q=0.9"
+              }
+            ],
+            "assert": [],
+            "extract": [
+              {
+                "testPlan2_id": {
+                  "jsonPath": "$[\"testPlanId\"]"
+                }
+              }
+            ],
+            "timeout": 60000,
+            "expectedStatus": "SUCCESS",
+            "description": "create test plan 2"
+          },
+          {
+            "url": "${web_url}/api/test-plans/${__encode_url(testPlan2_id)}",
+            "method": "PATCH",
+            "headers": [
+              {
+                "Accept": "*/*"
+              },
+              {
+                "Referer": "https://loadmill-test-plan-run-wznxu2h.herokuapp.com/app/api-tests/test-plans/c0874810-ff40-457c-a75d-4fd495c9863e"
+              },
+              {
+                "Accept-Language": "en-US,en;q=0.9"
+              }
+            ],
+            "assert": [],
+            "extract": [],
+            "timeout": 60000,
+            "expectedStatus": "SUCCESS",
+            "description": "update test plan 2 description",
+            "postData": {
+              "text": "{\"description\":\"${test_plan_2}\"}",
+              "mimeType": "application/json"
+            }
+          },
+          {
+            "url": "${web_url}/api/test-plans/${__encode_url(testPlan2_id)}",
+            "method": "PUT",
+            "headers": [
+              {
+                "Accept": "*/*"
+              },
+              {
+                "Referer": "https://loadmill-test-plan-run-wznxu2h.herokuapp.com/app/api-tests/test-plans/c0874810-ff40-457c-a75d-4fd495c9863e"
+              },
+              {
+                "Accept-Language": "en-US,en;q=0.9"
+              }
+            ],
+            "assert": [],
+            "extract": [],
+            "timeout": 60000,
+            "expectedStatus": "SUCCESS",
+            "description": "change test plan 2 to run all suites",
+            "postData": {
+              "text": "{\"multiRun\":{\"mode\":\"all\",\"labels\":[]},\"testSuiteIds\":[]}",
+              "mimeType": "application/json"
+            }
+          },
+          {
+            "url": "${web_url}/api/test-plans/${__encode_url(emptyTestPlan_id)}/run",
+            "method": "POST",
+            "headers": [
+              {
+                "Accept": "*/*"
+              },
+              {
+                "Referer": "https://loadmill-test-plan-run-wznxu2h.herokuapp.com/app/api-tests/test-plans/c0874810-ff40-457c-a75d-4fd495c9863e"
+              },
+              {
+                "Accept-Language": "en-US,en;q=0.9"
+              }
+            ],
+            "assert": [],
+            "extract": [
+              {
+                "EmptyTestPlanRun_id": {
+                  "jsonPath": "$[\"testPlanRunId\"]"
+                }
+              }
+            ],
+            "timeout": 60000,
+            "expectedStatus": "SUCCESS",
+            "description": "run test plan 1 (empty)"
+          },
+          {
+            "url": "${web_url}/api/test-plans/${__encode_url(testPlan2_id)}/run",
+            "method": "POST",
+            "headers": [
+              {
+                "Accept": "*/*"
+              },
+              {
+                "Referer": "https://loadmill-test-plan-run-wznxu2h.herokuapp.com/app/api-tests/test-plans/c0874810-ff40-457c-a75d-4fd495c9863e"
+              },
+              {
+                "Accept-Language": "en-US,en;q=0.9"
+              }
+            ],
+            "assert": [],
+            "extract": [],
+            "timeout": 60000,
+            "expectedStatus": "SUCCESS",
+            "description": "run test plan 2 (run all)"
+          },
+          {
+            "url": "${web_url}/api/test-plans-runs?page=0&search=${test_plan_1}&filter=Passed&fromDateFilter&toDateFilter&rowsPerPage=10",
+            "method": "GET",
+            "headers": [],
+            "assert": [
+              {
+                "check": "passed_filter",
+                "equals": "PASSED"
+              }
+            ],
+            "extract": [
+              {
+                "passed_filter": {
+                  "jsonPath": "$[\"testPlanRuns\"][0][\"status\"]"
+                }
+              }
+            ],
+            "timeout": 60000,
+            "expectedStatus": "SUCCESS",
+            "description": "Filter test plan by status PASSED",
+            "postData": {
+              "text": "",
+              "mimeType": "application/json"
+            },
+            "loop": {
+              "assert": {
+                "check": "passed_filter"
+              },
+              "iterations": 15
+            }
+          },
+          {
+            "url": "${web_url}/api/test-plans-runs?page=0&search=${test_plan_2}&filter=Failed&fromDateFilter&toDateFilter&rowsPerPage=10",
+            "method": "GET",
+            "headers": [],
+            "assert": [],
+            "extract": [
+              {
+                "failed_filter": {
+                  "jsonPath": "$[\"testPlanRuns\"][0][\"status\"]"
+                }
+              }
+            ],
+            "timeout": 60000,
+            "expectedStatus": "SUCCESS",
+            "description": "Filter test plan by status FAILED",
+            "loop": {
+              "assert": {
+                "check": "failed_filter"
+              },
+              "iterations": 10
+            }
+          },
+          {
+            "url": "${web_url}/api/test-plans-runs?page=0&filter=All&fromDateFilter=${now - '300000'}&toDateFilter=${now}&rowsPerPage=10",
+            "method": "GET",
+            "headers": [],
+            "assert": [
+              {
+                "check": "start_time_res_test",
+                "lesser": "${now}"
+              },
+              {
+                "check": "start_time_res_test",
+                "greater": "${now - '300000'}"
+              }
+            ],
+            "extract": [
+              {
+                "start_time_res_test": {
+                  "jsonPath": "$[\"testPlanRuns\"][0][\"startTime\"]"
+                }
+              }
+            ],
+            "timeout": 60000,
+            "expectedStatus": "SUCCESS",
+            "description": "Filter test plan by date"
+          },
+          {
+            "url": "${web_url}/api/test-plans-runs?page=0&filter=All&fromDateFilter=${now + '10000'}&toDateFilter=${now + '300000'}&rowsPerPage=10",
+            "method": "GET",
+            "headers": [],
+            "assert": [
+              {
+                "check": "future_test_time",
+                "falsy": true
+              }
+            ],
+            "extract": [
+              {
+                "future_test_time": {
+                  "jsonPath": "$[\"testPlanRuns\"][0]"
+                }
+              }
+            ],
+            "timeout": 60000,
+            "expectedStatus": "SUCCESS",
+            "description": "Filter test plan by a future date"
+          },
+          {
+            "url": "${web_url}/api/test-suites/${__encode_url(testSuite1_id)}",
+            "method": "DELETE",
+            "headers": [
+              {
+                "Accept": "*/*"
+              },
+              {
+                "Referer": "https://loadmill-test-plan-run-wznxu2h.herokuapp.com/app/api-tests/test-suites"
+              },
+              {
+                "Accept-Language": "en-US,en;q=0.9"
+              }
+            ],
+            "assert": [],
+            "extract": [],
+            "timeout": 60000,
+            "expectedStatus": "SUCCESS",
+            "description": "delete suite 1"
+          },
+          {
+            "url": "${web_url}/api/test-plans/${__encode_url(emptyTestPlan_id)}",
+            "method": "DELETE",
+            "headers": [
+              {
+                "Accept": "*/*"
+              },
+              {
+                "Referer": "https://loadmill-test-plan-run-wznxu2h.herokuapp.com/app/api-tests/test-plans"
+              },
+              {
+                "Accept-Language": "en-US,en;q=0.9"
+              }
+            ],
+            "assert": [],
+            "extract": [],
+            "timeout": 60000,
+            "expectedStatus": "SUCCESS",
+            "description": "delete the empty test plan"
+          },
+          {
+            "url": "${web_url}/api/test-plans/${__encode_url(testPlan2_id)}",
+            "method": "DELETE",
+            "headers": [
+              {
+                "Accept": "*/*"
+              },
+              {
+                "Referer": "https://loadmill-test-plan-run-wznxu2h.herokuapp.com/app/api-tests/test-plans"
+              },
+              {
+                "Accept-Language": "en-US,en;q=0.9"
+              }
+            ],
+            "assert": [],
+            "extract": [],
+            "timeout": 60000,
+            "expectedStatus": "SUCCESS",
+            "description": "delete test plan 2"
+          }
+        ],
+        "meta": {
+          "description": " tests for filter in tp"
+        },
+        "parameterPools": [],
+        "targetedCountries": [],
+        "iterationDelay": 1000,
+        "cachePenetration": {},
+        "rampUp": 60000,
+        "skipLoginFlow": false,
+        "parameters": [
+          {
+            "web_url": [
+              "https://staging.loadmill.com",
+              "http://localhost:8090",
+              "https://loadmill-auto-descripti-y4vyyb.herokuapp.com"
+            ]
+          },
+          {
+            "testSuite1_desc": "suite 1"
+          },
+          {
+            "test_plan_1": "${__random_uuid()}"
+          },
+          {
+            "test_plan_2": "${__random_uuid()}"
+          },
+          {
+            "now": "${__now()}"
+          }
+        ]
+      },
+      "runInCi": false
+    }
+  ],
+  "hooks": {},
+  "dependencies": {
+    "hooks": {},
+    "login": {
+      "id": "2c5da40b-c5c7-4780-bba2-a81de5f2b8fb"
+    }
+  }
+}
