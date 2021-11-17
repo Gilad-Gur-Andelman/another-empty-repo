@@ -1,0 +1,207 @@
+conf:
+  meta:
+    description: New Test Suite - Nov 09
+  parameters:
+    - p2: "3"
+    - p1: "1"
+    - p3:
+        - "2"
+        - "1"
+        - "3"
+    - p5d:
+        - qwe
+        - "4"
+    - p56: "1"
+    - origin_1: https://app.loadmill.com
+    - origin_2: https://api-iam.intercom.io
+    - referer_in_request_body_2: https://app.loadmill.com/app/api-tests/test-suites
+    - email_user_datum_in_request_body_2: onni@loadmill.com
+    - user_id_user_datum_in_request_body_2: 68742927-bf17-4413-85a9-88eb20f73651
+    - anonymous_id_user_datum_in_request_body_2: a5c29f49-ed2b-4357-8b8b-41e8df956385
+    - app_id_in_request_body_2: h9zhjyou
+    - v_in_request_body_2: "3"
+    - g_in_request_body_2: c34bf28f7e9a39d606bf8182bc498da6b40a6fec
+    - in_request_body_2: a2b694f3-3bfd-4f18-b638-da3b70aa6cec
+    - platform_in_request_body_2: web
+    - user_active_company_id_in_request_body_2: "-1"
+    - source_in_request_body_2: apiUpdate
+    - sampling_in_request_body_2: "false"
+    - referer_in_request_body_6: https://app.loadmill.com/app/api-tests/test-suites/edbd5143-8807-4a6f-bd96-2c35e6e135a5/flows
+    - page_title_in_request_body_9: Loadmill - Test Suite - hooks api test suite
+    - referer_in_request_body_9: https://app.loadmill.com/app/api-tests/test-suites/edbd5143-8807-4a6f-bd96-2c35e6e135a5/flows/ace9d360-1433-4314-90d4-907c4af8dfa2
+  useCookies: true
+  loginFlow:
+    
+    - method: GET
+      url: ${p5d}
+
+  authenticationHeaders: []
+  sharedLoginFlowDescription: New Load Test - Nov 11
+  parametersScope: SUITE
+flows:
+  - id: d28840c9-64e6-453b-a752-0ddf40c918eb
+    order: 0
+    conf:
+      meta:
+        description: New Flow
+      requests:
+        
+        - method: GET
+          url: ${p1}${p2}${p3}
+
+      parameterPools:
+        - 24a685e2-3272-4c76-aab2-21663fcbe289
+    runInCi: false
+    assignedLabelsIds:
+      - id: a903dbe3-3499-4eef-8270-a5a781dbfb58
+  - id: ebc368ac-0bab-4870-b92e-797f76260edc
+    order: 1
+    conf:
+      meta:
+        description: Recorded Flow - Nov 11 11:48
+      requests:
+        
+        - description: GET api/labels
+          method: GET
+          url: ${origin_1}/api/labels
+
+        - description: POST messenger/web/ping
+          method: POST
+          url: ${origin_2}/messenger/web/ping
+          postData:
+            text: app_id=${__encode_url(app_id_in_request_body_2)}&v=${__encode_url(v_in_request_body_2)}&g=${__encode_url(g_in_request_body_2)}&s=${__encode_url(in_request_body_2)}&r=&platform=${__encode_url(platform_in_request_body_2)}&Idempotency-Key=8256e9693694e0d8&internal=%7B%7D&page_title=Loadmill%20-%20Test%20Suites&user_active_company_id=${__encode_url(user_active_company_id_in_request_body_2)}&user_data=%7B%22email%22%3A%22${__encode_url(email_user_datum_in_request_body_2)}%22%2C%22user_id%22%3A%22${__encode_url(user_id_user_datum_in_request_body_2)}%22%2C%22anonymous_id%22%3A%22${__encode_url(anonymous_id_user_datum_in_request_body_2)}%22%7D&source=${__encode_url(source_in_request_body_2)}&sampling=${__encode_url(sampling_in_request_body_2)}&referer=${__encode_url(referer_in_request_body_2)}&anonymous_session=NEszeVlxazZGUit3R0JYTlNBd3c2UTVZSk5RaklaQUJJVFdoUUpaYURnRkpSOFE3Q04vdnRVRk5LYzBnK0RxZy0tVW1BK3loZkZvNEV6MUhGLzdvZkdRdz09--5c1acdcea6b266c6a317d285634f5b51af3db420
+            mimeType: application/x-www-form-urlencoded
+          extract:
+            - anonymous_session_in_response_body_2:
+                jsonPath: $["anonymous_session"]
+          assert:
+            - check: anonymous_session_in_response_body_2
+
+        - description: GET api/test-suites
+          method: GET
+          url: ${origin_1}/api/test-suites?page=0&rowsPerPage=10&search=&filter=All&fromDateFilter&toDateFilter&orderBy=updated_at&orderDirection=desc
+          headers:
+            - referer: ${referer_in_request_body_2}
+          extract:
+            - id_of_1st_testSuite_in_response_body_3:
+                jsonPath: $["testSuites"][0]["id"]
+          assert:
+            - check: id_of_1st_testSuite_in_response_body_3
+
+        - description: GET api/test-suites/${id_of_1st_testSuite}
+          method: GET
+          url: ${origin_1}/api/test-suites/${__encode_url(id_of_1st_testSuite_in_response_body_3)}
+          extract:
+            - method_of_2nd_loginFlow_conf_in_response_body_4:
+                jsonPath: $["conf"]["loginFlow"][1]["method"]
+            - method_of_1st_loginFlow_conf_in_response_body_4:
+                jsonPath: $["conf"]["loginFlow"][0]["method"]
+            - id_of_1st_flow_in_response_body_4:
+                jsonPath: $["flows"][0]["id"]
+            - id_of_3rd_flow_in_response_body_4:
+                jsonPath: $["flows"][2]["id"]
+          assert:
+            - check: method_of_2nd_loginFlow_conf_in_response_body_4
+            - check: method_of_1st_loginFlow_conf_in_response_body_4
+            - check: id_of_1st_flow_in_response_body_4
+            - check: id_of_3rd_flow_in_response_body_4
+
+        - description: GET api/labels
+          method: GET
+          url: ${origin_1}/api/labels
+
+        - description: POST messenger/web/ping
+          method: POST
+          url: ${origin_2}/messenger/web/ping
+          postData:
+            text: app_id=${__encode_url(app_id_in_request_body_2)}&v=${__encode_url(v_in_request_body_2)}&g=${__encode_url(g_in_request_body_2)}&s=${__encode_url(in_request_body_2)}&r=&platform=${__encode_url(platform_in_request_body_2)}&Idempotency-Key=bd4d5413be89286a&internal=%7B%7D&page_title=Loadmill%20-%20Test%20Suite&user_active_company_id=${__encode_url(user_active_company_id_in_request_body_2)}&user_data=%7B%22email%22%3A%22${__encode_url(email_user_datum_in_request_body_2)}%22%2C%22user_id%22%3A%22${__encode_url(user_id_user_datum_in_request_body_2)}%22%2C%22anonymous_id%22%3A%22${__encode_url(anonymous_id_user_datum_in_request_body_2)}%22%7D&source=${__encode_url(source_in_request_body_2)}&sampling=${__encode_url(sampling_in_request_body_2)}&referer=${__encode_url(referer_in_request_body_6)}&anonymous_session=${__encode_url(anonymous_session_in_response_body_2)}
+            mimeType: application/x-www-form-urlencoded
+          extract:
+            - anonymous_session_in_response_body_6:
+                jsonPath: $["anonymous_session"]
+          assert:
+            - check: anonymous_session_in_response_body_6
+
+        - description: GET api/test-suites/${id_of_1st_testSuite}/flows/${id_of_1st_flow}
+          method: GET
+          url: ${origin_1}/api/test-suites/${__encode_url(id_of_1st_testSuite_in_response_body_3)}/flows/${__encode_url(id_of_1st_flow_in_response_body_4)}
+          headers:
+            - referer: ${referer_in_request_body_6}
+          extract:
+            - Accept_of_1st_header_of_1st_request_conf_in_response_body_7:
+                jsonPath: $["conf"]["requests"][0]["headers"][0]["Accept"]
+            - Accept_Language_of_2nd_header_of_1st_request_conf_in_response_body_7:
+                jsonPath: $["conf"]["requests"][0]["headers"][1]["Accept-Language"]
+          assert:
+            - check: Accept_of_1st_header_of_1st_request_conf_in_response_body_7
+            - check: Accept_Language_of_2nd_header_of_1st_request_conf_in_response_body_7
+
+        - description: GET auth/logged-in-user
+          method: GET
+          url: ${origin_1}/auth/logged-in-user
+          headers:
+            - accept: ${Accept_of_1st_header_of_1st_request_conf_in_response_body_7}
+            - referer: ${referer_in_request_body_6}
+            - accept-language: ${Accept_Language_of_2nd_header_of_1st_request_conf_in_response_body_7}
+
+        - description: POST messenger/web/ping
+          method: POST
+          url: ${origin_2}/messenger/web/ping
+          postData:
+            text: app_id=${__encode_url(app_id_in_request_body_2)}&v=${__encode_url(v_in_request_body_2)}&g=${__encode_url(g_in_request_body_2)}&s=${__encode_url(in_request_body_2)}&r=&platform=${__encode_url(platform_in_request_body_2)}&Idempotency-Key=8d7fab1dc8e84bf6&internal=%7B%7D&page_title=${__encode_url(page_title_in_request_body_9)}&user_active_company_id=${__encode_url(user_active_company_id_in_request_body_2)}&user_data=%7B%22email%22%3A%22${__encode_url(email_user_datum_in_request_body_2)}%22%2C%22user_id%22%3A%22${__encode_url(user_id_user_datum_in_request_body_2)}%22%2C%22anonymous_id%22%3A%22${__encode_url(anonymous_id_user_datum_in_request_body_2)}%22%7D&source=${__encode_url(source_in_request_body_2)}&sampling=${__encode_url(sampling_in_request_body_2)}&referer=${__encode_url(referer_in_request_body_9)}&anonymous_session=${__encode_url(anonymous_session_in_response_body_6)}
+            mimeType: application/x-www-form-urlencoded
+          headers:
+            - accept: ${Accept_of_1st_header_of_1st_request_conf_in_response_body_7}
+            - accept-language: ${Accept_Language_of_2nd_header_of_1st_request_conf_in_response_body_7}
+          extract:
+            - anonymous_session_in_response_body_9:
+                jsonPath: $["anonymous_session"]
+          assert:
+            - check: anonymous_session_in_response_body_9
+
+        - description: POST messenger/web/ping
+          method: POST
+          url: ${origin_2}/messenger/web/ping
+          postData:
+            text: app_id=${__encode_url(app_id_in_request_body_2)}&v=${__encode_url(v_in_request_body_2)}&g=${__encode_url(g_in_request_body_2)}&s=${__encode_url(in_request_body_2)}&r=&platform=${__encode_url(platform_in_request_body_2)}&Idempotency-Key=59c8c8381d8e1b19&internal=%7B%7D&page_title=${__encode_url(page_title_in_request_body_9)}&user_active_company_id=${__encode_url(user_active_company_id_in_request_body_2)}&user_data=%7B%22email%22%3A%22${__encode_url(email_user_datum_in_request_body_2)}%22%2C%22user_id%22%3A%22${__encode_url(user_id_user_datum_in_request_body_2)}%22%2C%22anonymous_id%22%3A%22${__encode_url(anonymous_id_user_datum_in_request_body_2)}%22%7D&source=${__encode_url(source_in_request_body_2)}&sampling=${__encode_url(sampling_in_request_body_2)}&referer=${__encode_url(referer_in_request_body_9)}&anonymous_session=${__encode_url(anonymous_session_in_response_body_9)}
+            mimeType: application/x-www-form-urlencoded
+          headers:
+            - accept: ${Accept_of_1st_header_of_1st_request_conf_in_response_body_7}
+            - accept-language: ${Accept_Language_of_2nd_header_of_1st_request_conf_in_response_body_7}
+
+        - description: GET api/test-suites/${id_of_1st_testSuite}/flows/${id_of_3rd_flow}
+          method: GET
+          url: ${origin_1}/api/test-suites/${__encode_url(id_of_1st_testSuite_in_response_body_3)}/flows/${__encode_url(id_of_3rd_flow_in_response_body_4)}
+          headers:
+            - accept: ${Accept_of_1st_header_of_1st_request_conf_in_response_body_7}
+            - referer: ${referer_in_request_body_9}
+            - accept-language: ${Accept_Language_of_2nd_header_of_1st_request_conf_in_response_body_7}
+
+        - description: GET auth/logged-in-user
+          method: GET
+          url: ${origin_1}/auth/logged-in-user
+          headers:
+            - accept: ${Accept_of_1st_header_of_1st_request_conf_in_response_body_7}
+            - referer: ${referer_in_request_body_9}
+            - accept-language: ${Accept_Language_of_2nd_header_of_1st_request_conf_in_response_body_7}
+
+        - method: GET
+          url: ""
+    runInCi: false
+hooks:
+  beforeAll:
+    meta: {}
+    requests:
+      
+
+      - method: GET
+        url: ${p56}
+dependencies:
+  hooks:
+    beforeAllId: e3cefece-0b4b-45c0-b29e-1d5297134282
+  labels:
+    - id: a903dbe3-3499-4eef-8270-a5a781dbfb58
+      description: new_label
+      color: "#f2d600"
+  login:
+    id: e1812cf4-b8e8-4325-bca2-f55457f29a94
